@@ -1,31 +1,8 @@
 ---
-# Internet-Draft Markdown Template
-#
-# Rename this file from draft-todo-yourname-protocol.md to get started.
-# Draft name format is draft-<yourname>-<workgroup>-<name>.md
-#
-# Set the "title" field below at the same time.  The "abbrev" field should be
-# updated too.  "abbrev" can be deleted if your title is short.
-#
-# You can edit the contents of the document as the same time.
-# Initial setup only needs the filename and title.
-# If you change title or name later, you can run the "Rewrite README" action.
-#
-# Do not include "-latest" in the file name.
-# The tools use "draft-<name>-latest" to find the draft name *inside* the draft,
-# such as the "docname" field below, and replace it with a draft number.
-# The "docname" field below can be left alone: it will be updated for you.
-#
-# This template uses kramdown-rfc2629: https://github.com/cabo/kramdown-rfc2629
-# You can replace the entire file if you prefer a different format.
-# Change the file extension to match the format (.xml for XML, etc...)
-#
-# Delete this comment when you are done.
-#
 title: "Extended relation information for Semantic Definition Format (SDF)"
 abbrev: "SDF Relations"
 docname: draft-laari-asdf-relations-latest
-category: info
+category: std
 
 ipr: trust200902
 area: ART
@@ -69,11 +46,13 @@ The Semantic Definition Format (SDF) base specification defines set of basic inf
 
 The Semantic Definition Format (SDF) {{SDF}} is a format for domain experts to use in the creation and maintenance of data and interaction models in the Internet of Things. The SDF specification defines a generic data model that can be used as a meta model when converting between other data models, such as IPSO Smart Objects or Digital Twins Definition Language (DTDL) {{DTDL}}. SDF model defines a set of affordances, describing the interfaces for the Object. These can be mapped to corresponding affordances in other data models.
 
-The base specification defines ways to represent parent-child relations between two definitions. However, there is a need to describe also more complex relations to support arbitrary connections between definitions and also referring to definitions outside of the SDF models. These could be, for example, defining possible location of a device inside a room, how a device is controlled by another device, or physical topology between devices. This enables defining more complex systems using SDF models.
+The base specification defines ways to represent parent-child relations between two definitions. However, sometimes there is a need to describe also more complex relations to support arbitrary connections between definitions and also referring to definitions outside of the SDF models. These could be, for example, defining possible location of a device inside a room, how a device is controlled by another device, or physical topology between devices. This enables defining more complex systems using SDF models.
 
-The basic parent-child relations between SDF Objects and Things can be defined by including a definition of a child in the definition of the parent. This covers a large share of simple data models defining, e.g., simple sensors, or more complex devices containing a set of sensors. On the other hand, SDF can be used also to describe even more complex entities, such as buildings with rooms and other related objects inside a building. When we extend the SDF usage, the simple relation is often not enough, but more complex relations may be needed to describe the connections between the definitions. These relations can be for example physical (e.g., an object is inside another object), functional (e.g., an object can control another object), or semantic (e.g., an object is similar to a term defined in another ontology).
+The basic parent-child relations between SDF Objects and Things can be defined by including a definition of a child in the definition of the parent. This covers a large share of simple data models defining, e.g., simple sensors, or more complex devices containing a set of sensors. On the other hand, SDF can be used also to describe even more complex entities, such as buildings with rooms and other related objects inside a building. When we extend the SDF usage, the simple parent-child relation is often not enough, but more complex relations may be needed to describe the connections between the definitions. These relations can be for example physical (e.g., an object is inside another object), functional (e.g., an object can control another object), or semantic (e.g., an object is similar to a term defined in another ontology).
 
-This document extends the base SDF specification by adding a new key word to describe also other relations between physical or logical objects. This new key word is needed to describe, without loss of information, models from ecosystems that are using complex relation information in their definitions.
+This document extends the base SDF specification by adding a new keyword to describe also other relations between physical or logical objects. This new keyword is needed to describe, without loss of information, models from ecosystems that are using complex relation information in their definitions.
+
+This extension enables describing relations from SDF models to various (SDF or other) definitions. For a link data type for affordances, e.g., for a link property that can be accesses and modified during runtime, the "sdfType for links" extension {{?I-D.bormann-asdf-sdftype-link}} can be used instead.
 
 NOTE: This extension is now defined based on the Relationships feature in the DTDL specification. There may be other kind of definitions for relationships in other data models that must be taken into account and this specification may need to be extended to cover also those requirements.
 
