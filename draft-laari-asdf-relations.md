@@ -38,7 +38,7 @@ informative:
 
 --- abstract
 
-The Semantic Definition Format (SDF) base specification defines set of basic information elements that can be used for describing a large share of the existing data models from different ecosystems. While these data models are typically very simple, such as basic sensors definitions, more complex models, and in particular bigger systems, benefit from ability to describe additional information on how different definitions relate to each other. This document specifies an extension to SDF for describing complex relationships and additional information about them.
+The Semantic Definition Format (SDF) base specification defines set of basic information elements that can be used for describing a large share of the existing data models from different ecosystems. While these data models are typically very simple, such as basic sensors definitions, more complex models, and in particular bigger systems, benefit from ability to describe additional information on how different definitions relate to each other. This document specifies an extension to SDF for describing complex relationships in class level descriptions. This specification does not consider instance-specific information.
 
 --- middle
 
@@ -50,7 +50,7 @@ The base specification defines ways to represent parent-child relations between 
 
 The basic parent-child relations between SDF Objects and Things can be defined by including a definition of a child in the definition of the parent. This covers a large share of simple data models defining, e.g., simple sensors, or more complex devices containing a set of sensors. On the other hand, SDF can be used also to describe even more complex entities, such as buildings with rooms and other related objects inside a building. When we extend the SDF usage, the simple parent-child relation is often not enough, but more complex relations may be needed to describe the connections between the definitions. These relations can be for example physical (e.g., an object is inside another object), functional (e.g., an object can control another object), or semantic (e.g., an object is similar to a term defined in another ontology).
 
-This document extends the base SDF specification by adding a new keyword to describe also other relations between physical or logical objects. This new keyword is needed to describe, without loss of information, models from ecosystems that are using complex relation information in their definitions.
+This document extends the base SDF specification by adding a new keyword to describe also other relations between physical or logical objects than plain parent-child relations. This new keyword is needed to describe, without loss of information, models from ecosystems that are using complex relation information in their definitions.
 
 This extension enables describing relations from SDF models to various (SDF or other) definitions. For a link data type for affordances, e.g., for a link property that can be accesses and modified during runtime, the "sdfType for links" extension {{?I-D.bormann-asdf-sdftype-link}} can be used instead.
 
@@ -87,13 +87,10 @@ In this section, the qualities of the sdfRelation are defined. These qualities a
 | Quality     | Type        | Required | Description                                      |
 | ----------- | ----------- | -------- | ------------------------------------------------ |
 | relType     | string/IRI? | no       | What kind of relationship these definitions have |
-| target      | string      | no       | Target definition for the relation               |
+| target      | string      | no       | Target model for the relation                    |
 | description | string      | no       | Description of the relationship                  |
-| maxItems    | integer     | no       | Maximum number of instances of the target types  |
-| minItems    | integer     | no       | Minimum number of instances of the target types  |
-| property    | object      | no       | Additional properties for this relation          |
-| writable    | boolean     | no       | Is the target writable or not                    |
-
+| label       | string      | no       | (TBD)                                            |
+| property    | object      | no       | Additional properties for this relation / this is inherited from DTDL, not valid for SDF    |
 
 ### relType
 
@@ -133,23 +130,12 @@ The target does not have to be another SDF object, but it can be also a referenc
 
 The description of the relationship. For SDF version 1.1, the description is a string. (For future SDF versions this description can be localizable, allowing different languages in the description.)
 
-### maxItems
+### label
 
-Maximum number of instances of the target definition that can be related to this definition. If not specified, the number of instances is not limited.
+(TBD)
 
-### minItems
 
-The minimum number of instances of the target definition that must exist for this definition. If defined, this value MUST be between zero and maxItems. Default: 0.
-
-### property
-
-Object with key-value pairs that describe additional properties for this relationship. Details TBD.
-
-### writable
-
-Is the information of the relation writable, i.e., can be changed. Default: false.
-
-## Example relation description
+## Example relation description with sdfType links
 
 In the following example, we have a definition for `first-object` which located next to `second-object`:
 
@@ -161,10 +147,14 @@ In the following example, we have a definition for `first-object` which located 
     "first-object": {
       "description": "Example object",
       "sdfProperty": {
-        ...
+        "adjacent-node": {
+          "type": "object",
+          "sdfType": "link"
+        }
       },
       "sdfRelation": {
-        "next": {
+        "next-to": {
+          "description": "This object is adjacent to the second object",
           "relType": "exont:next-to",
           "target": "#/sdfObject/second-object"
         }
@@ -173,10 +163,14 @@ In the following example, we have a definition for `first-object` which located 
     "second-object": {
       "description": "Example object, next to the first object",
       "sdfProperty": {
+        "adjacent-node": {
+          "type": "object",
+          "sdfType": "link"
+        }
         ...
       },
       "sdfRelation": {
-        "next": {
+        "next-to": {
           "relType": "exont:next-to",
           "target": "#/sdfObject/first-object"
         }
@@ -185,25 +179,75 @@ In the following example, we have a definition for `first-object` which located 
   }
 </sourcecode>
 
-# SDF DTDL mapping
+# DTDL - SDF conversion
 
-This section (to be removed) shows mapping between SDF and DTDL qualities for relations.
+This section (to be removed) discusses the mapping between SDF and DTDL qualities.
+
+| Quality (DTDL) | Quality (SDF) | Description | Required in DTDL |
+| @type | sdfRelation | DTDL Interface (Relationship), maps to sdfRelation in SDF | yes |
+| @id | - | DTDL: The ID of the relationship description | no |
+| comment | $comment | 	A comment for model authors | no |
+| description | description | DTDL: localizable description for display | no |
+| displayName | label | DTDL: localizable name for display | no |
+| maxMultiplicity | - | max multiplicity for the target, maps to maxItems in SDF instance | no |
+| minMultiplicity | - | min multiplicity for the target (must be zero), maps to minItems in SDF instance | no |
+| name | "name of relation" | The programming name of the element | yes |
+| properties | to sdfProperty | A set of Properties that define Relationship-specific state | no |
+| target | target | An interface identifier of the target (or "any" if not specified) | no |
+| writable | - | 	A boolean value that indicates whether the Relationship is writable or not, maps to SDF instance "writable" | no |
 
 
-| Quality (SDF)      | Quality (DTDL)  | Description                                                             | Required |
-| ------------------ | --------------- | ----------------------------------------------------------------------- | -------- |
-| sdfRelation        | @type           | In DTDL, this is "Relationship", this is the objects sdfRelation entity | yes      |
-| "name-of-relation" | name            | In SDF, this is the entity name                                         | yes      |
-| relType            | @id             | DTDL: The ID of the relationship description                            | no       |
-| writable           | writable        | Boolean, is this relation writable or not                               | no       |
-| target             | target          | An Interface ID, in SDF the target definition                           | no       |
-| $comment           | comment         | This is for model authors in DTDL                                       | no       |
-| description        | description     | DTDL: localizable description for display                               | no       |
-|                    | displayName     | DTDL: localizable name for display                                      | no       |
-| property           | properties      | A set of Properties that define relationship-specific state             | no       |
-| maxItems           | maxMultiplicity | max nof target instances                                                | no       |
-| minItems           | minMultiplicity | min nof target instances                                                | no       |
+## DTDL specific conversion
 
+### DTDL @type and DTDL name
+
+This defines the sdfRelation itself and the name is the name of the sdfRelation entry, i.e. @type Relationship and name converts to:
+
+<sourcecode>
+...
+"sdfRelation": {
+  "name-from-DTDL": {
+    ...
+  }
+}
+</sourcecode>
+
+
+### DTDL @id
+
+In the example DTDL files, this is never present. This is the identifier for the relationship, no further definition in the specification. In DTDL this value is given automatically if it does not exist in the DTDL model file.
+
+### DTDL comment
+
+This can be converted to $comment and it is a comment for the implementors.
+
+### DTDL description
+
+This maps directly to the SDF "description".
+
+### DTDL displayName
+
+This converts to the "label" field in SDF.
+
+### max and minMultiplicity
+
+These define how many instances of the relationship can exist of the target type. The sdfRelation is purely a class-level definition, but sdfType "link" defines the actual instance specific information. Thus, these fields map to maxItems and minItems in the corresponding sdfType "link" definition.
+
+### DTDL properties
+
+Relationship definition in DTDL may contain additional properties (key-value pairs) that describe additional properties for this relationship. This can be converted into sdfProperty in the same object as where the sdfRelation definion is.
+
+### DTDL target
+
+In DTDL this is the Interface of the target, in SDF this maps to the target object of this relation.
+
+### DTDL writable
+
+The relationship itself is not defined to be writable, but this field maps to the SDF instance and to the  corresponding sdfType "link" definition.
+
+### SDF Relation type
+
+In SDF, the relType is giving the type of the relationship, e.g. isControlledBy. However, in DTDL, this is not directly described in the DTDL file.
 
 
 # Security Considerations
