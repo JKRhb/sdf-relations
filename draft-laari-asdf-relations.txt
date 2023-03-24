@@ -1,0 +1,489 @@
+
+
+
+
+ASDF Working Group                                              P. Laari
+Internet-Draft                                                  Ericsson
+Intended status: Standards Track                           24 March 2023
+Expires: 25 September 2023
+
+
+   Extended relation information for Semantic Definition Format (SDF)
+                   draft-laari-asdf-relations-latest
+
+Abstract
+
+   The Semantic Definition Format (SDF) base specification defines set
+   of basic information elements that can be used for describing a large
+   share of the existing data models from different ecosystems.  While
+   these data models are typically very simple, such as basic sensors
+   definitions, more complex models, and in particular bigger systems,
+   benefit from ability to describe additional information on how
+   different definitions relate to each other.  This document specifies
+   an extension to SDF for describing complex relationships in class
+   level descriptions.  This specification does not consider instance-
+   specific information.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 25 September 2023.
+
+Copyright Notice
+
+   Copyright (c) 2023 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction
+   2.  Terminology
+   3.  SDF Relation Extension
+     3.1.  Namespaces
+     3.2.  Qualities of sdfRelation
+       3.2.1.  relType
+       3.2.2.  target
+       3.2.3.  description
+       3.2.4.  label
+     3.3.  Example relation description with sdfType links
+   4.  DTDL - SDF conversion
+     4.1.  DTDL specific conversion
+       4.1.1.  DTDL @type and DTDL name
+       4.1.2.  DTDL @id
+       4.1.3.  DTDL comment
+       4.1.4.  DTDL description
+       4.1.5.  DTDL displayName
+       4.1.6.  max and minMultiplicity
+       4.1.7.  DTDL properties
+       4.1.8.  DTDL target
+       4.1.9.  DTDL writable
+       4.1.10. SDF Relation type
+   5.  Security Considerations
+   6.  IANA Considerations
+   7.  References
+     7.1.  Normative References
+     7.2.  Informative References
+   Acknowledgments
+   Author's Address
+
+1.  Introduction
+
+   The Semantic Definition Format (SDF) [SDF] is a format for domain
+   experts to use in the creation and maintenance of data and
+   interaction models in the Internet of Things.  The SDF specification
+   defines a generic data model that can be used as a meta model when
+   converting between other data models, such as IPSO Smart Objects or
+   Digital Twins Definition Language (DTDL) [DTDL].  SDF model defines a
+   set of affordances, describing the interfaces for the Object.  These
+   can be mapped to corresponding affordances in other data models.
+
+   The base specification defines ways to represent parent-child
+   relations between two definitions.  However, sometimes there is a
+   need to describe also more complex relations to support arbitrary
+   connections between definitions and also referring to definitions
+   outside of the SDF models.  These could be, for example, defining
+   possible location of a device inside a room, how a device is
+   controlled by another device, or physical topology between devices.
+   This enables defining more complex systems using SDF models.
+
+   The basic parent-child relations between SDF Objects and Things can
+   be defined by including a definition of a child in the definition of
+   the parent.  This covers a large share of simple data models
+   defining, e.g., simple sensors, or more complex devices containing a
+   set of sensors.  On the other hand, SDF can be used also to describe
+   even more complex entities, such as buildings with rooms and other
+   related objects inside a building.  When we extend the SDF usage, the
+   simple parent-child relation is often not enough, but more complex
+   relations may be needed to describe the connections between the
+   definitions.  These relations can be for example physical (e.g., an
+   object is inside another object), functional (e.g., an object can
+   control another object), or semantic (e.g., an object is similar to a
+   term defined in another ontology).
+
+   This document extends the base SDF specification by adding a new
+   keyword to describe also other relations between physical or logical
+   objects than plain parent-child relations.  This new keyword is
+   needed to describe, without loss of information, models from
+   ecosystems that are using complex relation information in their
+   definitions.
+
+   This extension enables describing relations from SDF models to
+   various (SDF or other) definitions.  For a link data type for
+   affordances, e.g., for a link property that can be accesses and
+   modified during runtime, the "sdfType for links" extension
+   [I-D.bormann-asdf-sdftype-link] can be used instead.
+
+   NOTE: This extension is now defined based on the Relationships
+   feature in the DTDL specification.  There may be other kind of
+   definitions for relationships in other data models that must be taken
+   into account and this specification may need to be extended to cover
+   also those requirements.
+
+2.  Terminology
+
+   This specification uses the terminology specified in [SDF], in
+   particular "Class Name Keyword", "Object", and "Affordance".
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+3.  SDF Relation Extension
+
+   This section defines a new SDF Class Name Keyword, sdfRelation, that
+   can be used to describe complex relations.  The relationship
+   definitions are on class-level, i.e., the sdfRelation keyword does
+   describe instance specific information about the relation, but
+   describes how different models and definitions relate to each other.
+
+3.1.  Namespaces
+
+   The SDF namespace block can be used to provide CURIE prefixes for
+   external ontologies for use with sdfRelation extension.  For example,
+   in case of SAREF (Smart Applications REFerence ontology) ontology
+   extension for buildings [saref4bldg], we can use the following
+   namespace definition:
+
+   {
+     "namespace": {
+       "saref": "https://saref.etsi.org/saref4bldg/v1.1.2/"
+     }
+   }
+
+3.2.  Qualities of sdfRelation
+
+   In this section, the qualities of the sdfRelation are defined.  These
+   qualities are used to define the potential type of the connection
+   between the definitions and to which definition the connection can be
+   made.
+
+   +=============+=========+==========+================================+
+   | Quality     | Type    | Required | Description                    |
+   +=============+=========+==========+================================+
+   | relType     | string/ | no       | What kind of                   |
+   |             | IRI?    |          | relationship these             |
+   |             |         |          | definitions have               |
+   +-------------+---------+----------+--------------------------------+
+   | target      | string  | no       | Target model for the           |
+   |             |         |          | relation                       |
+   +-------------+---------+----------+--------------------------------+
+   | description | string  | no       | Description of the             |
+   |             |         |          | relationship                   |
+   +-------------+---------+----------+--------------------------------+
+   | label       | string  | no       | Short text describing          |
+   |             |         |          | the relationship               |
+   +-------------+---------+----------+--------------------------------+
+   | property    | object  | no       | Additional properties          |
+   |             |         |          | for this relation /            |
+   |             |         |          | this is inherited from         |
+   |             |         |          | DTDL, not valid for SDF        |
+   +-------------+---------+----------+--------------------------------+
+
+                                  Table 1
+
+3.2.1.  relType
+
+   The relType quality describes what kind of relationship this
+   definition has to the target definition.  This can use different
+   ontologies, such as SAREF from ETSI.  The used ontology MUST be
+   defined in the namespace block to give a short name for the ontology
+   IRI.
+
+   For example the "relType" field could define the relationship to be
+   saref:isControlledByDevice, when the SAREF ontology is used with
+   CURIE prefix "saref" defined in the namespace block for the full IRI
+   https://saref.etsi.org/saref4bldg/v1.1.2/. The defined purpose for
+   the relation is a functional relationship between the two
+   definitions.
+
+3.2.2.  target
+
+   The "target" field defines to which definition or ontology term this
+   definition with sdfRelation has a relation to.  For example, this can
+   be #/sdfObject/room, when the target object room is defined in the
+   same SDF model.  This may also be left undefined, and in that case
+   the relation may be any other object (Note: This is from DTDL
+   (check), does it make sense in SDF context?)
+
+   In addition to SDF definitions, the target can be also a reference to
+   another ontology.  For example, a temperature sensor SDF definition
+   can be augmented with information that a SAREF definition of a
+   TemperatureSensor has similar semantics as this SDF definition.
+
+     "namespace": {
+       "exont": "https://example.com/relationOntology",
+       "saref": "https://saref.etsi.org/core/v3.1.1/"
+     },
+     sdfObject: {
+       "temperature": {
+         "description": "Example temperature object",
+         "sdfProperty": {
+           ...
+         },
+         "sdfRelation": {
+           "sameAs": {
+             "relType": "exont:same-as",
+             "target": "saref:TemperatureSensor"
+           }
+         }
+       }
+       ...
+
+3.2.3.  description
+
+   The description of the relationship.  For SDF version 1.1, the
+   description is a string.  (For future SDF versions this description
+   can be localizable, allowing different languages in the description.)
+
+3.2.4.  label
+
+   Short text describing the relationship, similar to label quality in
+   other SDF definitions.
+
+3.3.  Example relation description with sdfType links
+
+   In the following example, we have a definition for first-object which
+   located next to second-object:
+
+     "namespace": {
+       "exont": "https://example.com/relationOntology"
+     },
+     sdfObject: {
+       "first-object": {
+         "description": "Example object",
+         "sdfProperty": {
+           "adjacent-node": {
+             "type": "object",
+             "sdfType": "link"
+           }
+         },
+         "sdfRelation": {
+           "next-to": {
+             "description": "This object is adjacent to the second object",
+             "relType": "exont:next-to",
+             "target": "#/sdfObject/second-object"
+           }
+         }
+       },
+       "second-object": {
+         "description": "Example object, next to the first object",
+         "sdfProperty": {
+           "adjacent-node": {
+             "type": "object",
+             "sdfType": "link"
+           }
+           ...
+         },
+         "sdfRelation": {
+           "next-to": {
+             "relType": "exont:next-to",
+             "target": "#/sdfObject/first-object"
+           }
+         }
+       }
+     }
+
+4.  DTDL - SDF conversion
+
+   This section (to be removed) discusses the mapping between SDF and
+   DTDL qualities.
+
+   +=================+=============+=======================+==========+
+   | Quality (DTDL)  | Quality     | Description           | Required |
+   |                 | (SDF)       |                       | in DTDL  |
+   +=================+=============+=======================+==========+
+   | @type           | sdfRelation | DTDL Interface        | yes      |
+   |                 |             | (Relationship), maps  |          |
+   |                 |             | to sdfRelation in SDF |          |
+   +-----------------+-------------+-----------------------+----------+
+   | @id             | -           | DTDL: The ID of the   | no       |
+   |                 |             | relationship          |          |
+   |                 |             | description           |          |
+   +-----------------+-------------+-----------------------+----------+
+   | comment         | $comment    | A comment for model   | no       |
+   |                 |             | authors               |          |
+   +-----------------+-------------+-----------------------+----------+
+   | description     | description | DTDL: localizable     | no       |
+   |                 |             | description for       |          |
+   |                 |             | display               |          |
+   +-----------------+-------------+-----------------------+----------+
+   | displayName     | label       | DTDL: localizable     | no       |
+   |                 |             | name for display      |          |
+   +-----------------+-------------+-----------------------+----------+
+   | maxMultiplicity | -           | max multiplicity for  | no       |
+   |                 |             | the target, maps to   |          |
+   |                 |             | maxItems in SDF       |          |
+   |                 |             | instance              |          |
+   +-----------------+-------------+-----------------------+----------+
+   | minMultiplicity | -           | min multiplicity for  | no       |
+   |                 |             | the target (must be   |          |
+   |                 |             | zero), maps to        |          |
+   |                 |             | minItems in SDF       |          |
+   |                 |             | instance              |          |
+   +-----------------+-------------+-----------------------+----------+
+   | name            | "name of    | The programming name  | yes      |
+   |                 | relation"   | of the element        |          |
+   +-----------------+-------------+-----------------------+----------+
+   | properties      | to          | A set of Properties   | no       |
+   |                 | sdfProperty | that define           |          |
+   |                 |             | Relationship-specific |          |
+   |                 |             | state                 |          |
+   +-----------------+-------------+-----------------------+----------+
+   | target          | target      | An interface          | no       |
+   |                 |             | identifier of the     |          |
+   |                 |             | target (or "any" if   |          |
+   |                 |             | not specified)        |          |
+   +-----------------+-------------+-----------------------+----------+
+   | writable        | -           | A boolean value that  | no       |
+   |                 |             | indicates whether the |          |
+   |                 |             | Relationship is       |          |
+   |                 |             | writable or not, maps |          |
+   |                 |             | to SDF instance       |          |
+   |                 |             | "writable"            |          |
+   +-----------------+-------------+-----------------------+----------+
+
+                                 Table 2
+
+4.1.  DTDL specific conversion
+
+4.1.1.  DTDL @type and DTDL name
+
+   This defines the sdfRelation itself and the name is the name of the
+   sdfRelation entry, i.e. @type Relationship and name converts to:
+
+   ...
+   "sdfRelation": {
+     "name-from-DTDL": {
+       ...
+     }
+   }
+
+4.1.2.  DTDL @id
+
+   In the example DTDL files, this is never present.  This is the
+   identifier for the relationship, no further definition in the
+   specification.  In DTDL this value is given automatically if it does
+   not exist in the DTDL model file.
+
+4.1.3.  DTDL comment
+
+   This can be converted to $comment and it is a comment for the
+   implementors.
+
+4.1.4.  DTDL description
+
+   This maps directly to the SDF "description".
+
+4.1.5.  DTDL displayName
+
+   This converts to the "label" field in SDF.
+
+4.1.6.  max and minMultiplicity
+
+   These define how many instances of the relationship can exist of the
+   target type.  The sdfRelation is purely a class-level definition, but
+   sdfType "link" defines the actual instance specific information.
+   Thus, these fields map to maxItems and minItems in the corresponding
+   sdfType "link" definition.
+
+4.1.7.  DTDL properties
+
+   Relationship definition in DTDL may contain additional properties
+   (key-value pairs) that describe additional properties for this
+   relationship.  This can be converted into sdfProperty in the same
+   object as where the sdfRelation definion is.
+
+4.1.8.  DTDL target
+
+   In DTDL this is the Interface of the target, in SDF this maps to the
+   target object of this relation.
+
+4.1.9.  DTDL writable
+
+   The relationship itself is not defined to be writable, but this field
+   maps to the SDF instance and to the corresponding sdfType "link"
+   definition.
+
+4.1.10.  SDF Relation type
+
+   In SDF, the relType is giving the type of the relationship, e.g.
+   isControlledBy.  However, in DTDL, this is not directly described in
+   the DTDL file.
+
+5.  Security Considerations
+
+   TODO Security
+
+6.  IANA Considerations
+
+   This document has no IANA actions.
+
+7.  References
+
+7.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [SDF]      Koster, M. and C. Bormann, "Semantic Definition Format
+              (SDF) for Data and Interactions of Things", Work in
+              Progress, Internet-Draft, draft-ietf-asdf-sdf-13, 12
+              January 2023, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-asdf-sdf-13>.
+
+7.2.  Informative References
+
+   [DTDL]     "Digital Twins Definition Language (DTDL) v2", 10 February
+              2022, <https://github.com/Azure/opendigitaltwins-
+              dtdl/blob/master/DTDL/v2/dtdlv2.md>.
+
+   [I-D.bormann-asdf-sdftype-link]
+              Bormann, C., "An sdfType for Links", Work in Progress,
+              Internet-Draft, draft-bormann-asdf-sdftype-link-00, 1
+              December 2022, <https://datatracker.ietf.org/doc/html/
+              draft-bormann-asdf-sdftype-link-00>.
+
+   [saref4bldg]
+              Poveda-Villalón, M. and R. Garcia-Castro, "SAREF extension
+              for building", 5 June 2020,
+              <https://saref.etsi.org/saref4bldg>.
+
+Acknowledgments
+
+   The author wants to thank Ari Keranen, Mikko Saarisalo, and Christer
+   Holmberg for their feedback and comments.
+
+Author's Address
+
+   Petri Laari
+   Ericsson
+   Email: petri.laari@ericsson.com

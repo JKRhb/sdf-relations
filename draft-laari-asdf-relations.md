@@ -64,7 +64,7 @@ This specification uses the terminology specified in {{SDF}}, in particular "Cla
 
 # SDF Relation Extension
 
-In this section we define a new SDF Class Name Keyword, sdfRelation, that can be used to describe complex relations. The definitions are on class-level, i.e., the sdfRelation keyword does not give any instance specific information about the relation, but defines the potential relations between definitions.
+This section defines a new SDF Class Name Keyword, sdfRelation, that can be used to describe complex relations. The relationship definitions are on class-level, i.e., the sdfRelation keyword does describe instance specific information about the relation, but describes how different models and definitions relate to each other.
 
 ## Namespaces
 
@@ -89,7 +89,7 @@ In this section, the qualities of the sdfRelation are defined. These qualities a
 | relType     | string/IRI? | no       | What kind of relationship these definitions have |
 | target      | string      | no       | Target model for the relation                    |
 | description | string      | no       | Description of the relationship                  |
-| label       | string      | no       | (TBD)                                            |
+| label       | string      | no       | Short text describing the relationship           |
 | property    | object      | no       | Additional properties for this relation / this is inherited from DTDL, not valid for SDF    |
 
 ### relType
@@ -100,9 +100,9 @@ For example the "relType" field could define the relationship to be `saref:isCon
 
 ### target
 
-The "target" field defines to which definition or ontology term this definition with sdfRelation has a relation to. This can be e.g. `#/sdfObject/room`, when the target object is defined in the same SDF model. This may also be left undefined, and in that case the relation may be any other object (Note: This is from DTDL (check), does it make sense in SDF context?)
+The "target" field defines to which definition or ontology term this definition with sdfRelation has a relation to. For example, this can be `#/sdfObject/room`, when the target object `room` is defined in the same SDF model. This may also be left undefined, and in that case the relation may be any other object (Note: This is from DTDL (check), does it make sense in SDF context?)
 
-The target does not have to be another SDF object, but it can be also a reference to another ontology. For example, we may have a Temperature sensor, which relation to SAREF temperature sensor is defined and it is the same as this one.
+In addition to SDF definitions, the target can be also a reference to another ontology. For example, a temperature sensor SDF definition can be augmented with information that a SAREF definition of a TemperatureSensor has similar semantics as this SDF definition.
 
 <sourcecode>
   "namespace": {
@@ -132,8 +132,7 @@ The description of the relationship. For SDF version 1.1, the description is a s
 
 ### label
 
-(TBD)
-
+Short text describing the relationship, similar to label quality in other SDF definitions.
 
 ## Example relation description with sdfType links
 
