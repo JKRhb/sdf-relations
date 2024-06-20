@@ -64,7 +64,7 @@ This specification uses the terminology specified in {{SDF}}, in particular "Cla
 
 # SDF Relation Extension
 
-This section defines a new SDF Class Name Keyword, sdfRelation, that can be used to describe complex relations. The relationship definitions are on class-level, i.e., the sdfRelation keyword does describe instance specific information about the relation, but describes how different models and definitions relate to each other.
+This section defines a new SDF Class Name Keyword, sdfRelation, that can be used to describe complex relations. The relationship definitions are on class-level, i.e., the sdfRelation keyword does not describe instance specific information about the relation, but describes how different models and definitions relate to each other.
 
 ## Namespaces
 
@@ -91,6 +91,7 @@ In this section, the qualities of the sdfRelation are defined. These qualities a
 | description | string      | no       | Description of the relationship                  |
 | label       | string      | no       | Short text describing the relationship           |
 | property    | object      | no       | Additional properties for this relation / this is inherited from DTDL, not valid for SDF    |
+| $comment | string | no | Additional comments for implementors |
 
 ### relType
 
@@ -105,11 +106,12 @@ The "target" field defines to which definition or ontology term this definition 
 In addition to SDF definitions, the target can be also a reference to another ontology. For example, a temperature sensor SDF definition can be augmented with information that a SAREF definition of a TemperatureSensor has similar semantics as this SDF definition.
 
 <sourcecode>
+{
   "namespace": {
     "exont": "https://example.com/relationOntology",
     "saref": "https://saref.etsi.org/core/v3.1.1/"
   },
-  sdfObject: {
+  "sdfObject": {
     "temperature": {
       "description": "Example temperature object",
       "sdfProperty": {
@@ -139,10 +141,11 @@ Short text describing the relationship, similar to label quality in other SDF de
 In the following example, we have a definition for `first-object` which located next to `second-object`:
 
 <sourcecode>
+{
   "namespace": {
     "exont": "https://example.com/relationOntology"
   },
-  sdfObject: {
+  "sdfObject": {
     "first-object": {
       "description": "Example object",
       "sdfProperty": {
@@ -153,7 +156,8 @@ In the following example, we have a definition for `first-object` which located 
       },
       "sdfRelation": {
         "next-to": {
-          "description": "This object is adjacent to the second object",
+          "description": "This object is adjacent to the second
+                          object",
           "relType": "exont:next-to",
           "target": "#/sdfObject/second-object"
         }
@@ -258,6 +262,21 @@ TODO Security
 
 This document has no IANA actions.
 
+# Appendix A. Formal Syntax of sdf-relation
+
+<sourcecode>
+sdfRelation = ( sdfRelation: {
+  ? relType: global
+  ? target: global
+  ? description: text
+  ? label: text
+  ? property: { * text => text }
+  ? $comment: text
+})
+
+; from SDF CDDL
+global = text .regexp ".*[:#].*" ; rough CURIE or JSON Pointer syntax
+</sourcecode>
 
 --- back
 
