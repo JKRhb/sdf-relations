@@ -182,77 +182,6 @@ In the following example, we have a definition for `first-object` which located 
   }
 </sourcecode>
 
-# DTDL - SDF conversion
-
-This section (to be removed) discusses the mapping between SDF and DTDL qualities.
-
-| Quality (DTDL) | Quality (SDF) | Description | Required in DTDL |
-| @type | sdfRelation | DTDL Interface (Relationship), maps to sdfRelation in SDF | yes |
-| @id | - | DTDL: The ID of the relationship description | no |
-| comment | $comment | 	A comment for model authors | no |
-| description | description | DTDL: localizable description for display | no |
-| displayName | label | DTDL: localizable name for display | no |
-| maxMultiplicity | - | max multiplicity for the target, maps to maxItems in SDF instance | no |
-| minMultiplicity | - | min multiplicity for the target (must be zero), maps to minItems in SDF instance | no |
-| name | "name of relation" | The programming name of the element | yes |
-| properties | to sdfProperty | A set of Properties that define Relationship-specific state | no |
-| target | target | An interface identifier of the target (or "any" if not specified) | no |
-| writable | - | 	A boolean value that indicates whether the Relationship is writable or not, maps to SDF instance "writable" | no |
-
-
-## DTDL specific conversion
-
-### DTDL @type and DTDL name
-
-This defines the sdfRelation itself and the name is the name of the sdfRelation entry, i.e. @type Relationship and name converts to:
-
-<sourcecode>
-...
-"sdfRelation": {
-  "name-from-DTDL": {
-    ...
-  }
-}
-</sourcecode>
-
-
-### DTDL @id
-
-In the example DTDL files, this is never present. This is the identifier for the relationship, no further definition in the specification. In DTDL this value is given automatically if it does not exist in the DTDL model file.
-
-### DTDL comment
-
-This can be converted to $comment and it is a comment for the implementors.
-
-### DTDL description
-
-This maps directly to the SDF "description".
-
-### DTDL displayName
-
-This converts to the "label" field in SDF.
-
-### max and minMultiplicity
-
-These define how many instances of the relationship can exist of the target type. The sdfRelation is purely a class-level definition, but sdfType "link" defines the actual instance specific information. Thus, these fields map to maxItems and minItems in the corresponding sdfType "link" definition.
-
-### DTDL properties
-
-Relationship definition in DTDL may contain additional properties (key-value pairs) that describe additional properties for this relationship. This can be converted into sdfProperty in the same object as where the sdfRelation definion is.
-
-### DTDL target
-
-In DTDL this is the Interface of the target, in SDF this maps to the target object of this relation.
-
-### DTDL writable
-
-The relationship itself is not defined to be writable, but this field maps to the SDF instance and to the  corresponding sdfType "link" definition.
-
-### SDF Relation type
-
-In SDF, the relType is giving the type of the relationship, e.g. isControlledBy. However, in DTDL, this is not directly described in the DTDL file.
-
-
 # Security Considerations
 
 TODO Security
@@ -277,6 +206,83 @@ sdfRelation = ( sdfRelation: {
 ; from SDF CDDL
 global = text .regexp ".*[:#].*" ; rough CURIE or JSON Pointer syntax
 </sourcecode>
+
+# Appendix B. Ecosystem Mappings
+
+This appendix provides an example mapping for SDF relations to related
+approaches from selected IoT ecosystems.
+
+TBD: This appendix will probably be removed eventually.
+
+## DTDL - SDF conversion
+
+This section (to be removed) discusses the mapping between SDF and DTDL qualities.
+
+| Quality (DTDL) | Quality (SDF) | Description | Required in DTDL |
+| @type | sdfRelation | DTDL Interface (Relationship), maps to sdfRelation in SDF | yes |
+| @id | - | DTDL: The ID of the relationship description | no |
+| comment | $comment | 	A comment for model authors | no |
+| description | description | DTDL: localizable description for display | no |
+| displayName | label | DTDL: localizable name for display | no |
+| maxMultiplicity | - | max multiplicity for the target, maps to maxItems in SDF instance | no |
+| minMultiplicity | - | min multiplicity for the target (must be zero), maps to minItems in SDF instance | no |
+| name | "name of relation" | The programming name of the element | yes |
+| properties | to sdfProperty | A set of Properties that define Relationship-specific state | no |
+| target | target | An interface identifier of the target (or "any" if not specified) | no |
+| writable | - | 	A boolean value that indicates whether the Relationship is writable or not, maps to SDF instance "writable" | no |
+
+
+### DTDL specific conversion
+
+#### DTDL @type and DTDL name
+
+This defines the sdfRelation itself and the name is the name of the sdfRelation entry, i.e. @type Relationship and name converts to:
+
+<sourcecode>
+...
+"sdfRelation": {
+  "name-from-DTDL": {
+    ...
+  }
+}
+</sourcecode>
+
+
+#### DTDL @id
+
+In the example DTDL files, this is never present. This is the identifier for the relationship, no further definition in the specification. In DTDL this value is given automatically if it does not exist in the DTDL model file.
+
+#### DTDL comment
+
+This can be converted to $comment and it is a comment for the implementors.
+
+#### DTDL description
+
+This maps directly to the SDF "description".
+
+#### DTDL displayName
+
+This converts to the "label" field in SDF.
+
+#### max and minMultiplicity
+
+These define how many instances of the relationship can exist of the target type. The sdfRelation is purely a class-level definition, but sdfType "link" defines the actual instance specific information. Thus, these fields map to maxItems and minItems in the corresponding sdfType "link" definition.
+
+#### DTDL properties
+
+Relationship definition in DTDL may contain additional properties (key-value pairs) that describe additional properties for this relationship. This can be converted into sdfProperty in the same object as where the sdfRelation definion is.
+
+#### DTDL target
+
+In DTDL this is the Interface of the target, in SDF this maps to the target object of this relation.
+
+#### DTDL writable
+
+The relationship itself is not defined to be writable, but this field maps to the SDF instance and to the  corresponding sdfType "link" definition.
+
+#### SDF Relation type
+
+In SDF, the relType is giving the type of the relationship, e.g. isControlledBy. However, in DTDL, this is not directly described in the DTDL file.
 
 --- back
 
