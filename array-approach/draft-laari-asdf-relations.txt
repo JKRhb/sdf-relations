@@ -69,13 +69,13 @@ Table of Contents
      3.3.  Example relation description with sdfType links
    4.  Security Considerations
    5.  IANA Considerations
-   6.  Appendix A.  Formal Syntax of sdf-relation
-   7.  Appendix B.  Ecosystem Mappings
-     7.1.  DTDL - SDF conversion
-       7.1.1.  DTDL specific conversion
-   8.  References
-     8.1.  Normative References
-     8.2.  Informative References
+   6.  References
+     6.1.  Normative References
+     6.2.  Informative References
+   Appendix A.  Formal Syntax of sdf-relation
+   Appendix B.  Ecosystem Mappings
+     B.1.  DTDL - SDF conversion
+       B.1.1.  DTDL specific conversion
    Acknowledgments
    Author's Address
 
@@ -312,7 +312,44 @@ Table of Contents
 
    This document has no IANA actions.
 
-6.  Appendix A.  Formal Syntax of sdf-relation
+6.  References
+
+6.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [SDF]      Koster, M., Bormann, C., and A. Keränen, "Semantic
+              Definition Format (SDF) for Data and Interactions of
+              Things", Work in Progress, Internet-Draft, draft-ietf-
+              asdf-sdf-24, 27 July 2025,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-asdf-
+              sdf-24>.
+
+6.2.  Informative References
+
+   [DTDL]     "Digital Twins Definition Language (DTDL) v2", 10 February
+              2022, <https://github.com/Azure/opendigitaltwins-
+              dtdl/blob/master/DTDL/v2/dtdlv2.md>.
+
+   [I-D.bormann-asdf-sdftype-link]
+              Bormann, C., "An sdfType for Links", Work in Progress,
+              Internet-Draft, draft-bormann-asdf-sdftype-link-04, 6
+              December 2024, <https://datatracker.ietf.org/doc/html/
+              draft-bormann-asdf-sdftype-link-04>.
+
+   [saref4bldg]
+              Poveda-Villalón, M. and R. Garcia-Castro, "SAREF extension
+              for building", 5 June 2020,
+              <https://saref.etsi.org/saref4bldg>.
+
+Appendix A.  Formal Syntax of sdf-relation
 
    sdfRelation = ( sdfRelation: {
      ? relType: global
@@ -326,14 +363,14 @@ Table of Contents
    ; from SDF CDDL
    global = text .regexp ".*[:#].*" ; rough CURIE or JSON Pointer syntax
 
-7.  Appendix B.  Ecosystem Mappings
+Appendix B.  Ecosystem Mappings
 
    This appendix provides an example mapping for SDF relations to
    related approaches from selected IoT ecosystems.
 
    TBD: This appendix will probably be removed eventually.
 
-7.1.  DTDL - SDF conversion
+B.1.  DTDL - SDF conversion
 
    This section (to be removed) discusses the mapping between SDF and
    DTDL qualities.
@@ -394,9 +431,9 @@ Table of Contents
 
                                  Table 2
 
-7.1.1.  DTDL specific conversion
+B.1.1.  DTDL specific conversion
 
-7.1.1.1.  DTDL @type and DTDL name
+B.1.1.1.  DTDL @type and DTDL name
 
    This defines the sdfRelation itself and the name is the name of the
    sdfRelation entry, i.e. @type Relationship and name converts to:
@@ -408,27 +445,27 @@ Table of Contents
      }
    }
 
-7.1.1.2.  DTDL @id
+B.1.1.2.  DTDL @id
 
    In the example DTDL files, this is never present.  This is the
    identifier for the relationship, no further definition in the
    specification.  In DTDL this value is given automatically if it does
    not exist in the DTDL model file.
 
-7.1.1.3.  DTDL comment
+B.1.1.3.  DTDL comment
 
    This can be converted to $comment and it is a comment for the
    implementors.
 
-7.1.1.4.  DTDL description
+B.1.1.4.  DTDL description
 
    This maps directly to the SDF "description".
 
-7.1.1.5.  DTDL displayName
+B.1.1.5.  DTDL displayName
 
    This converts to the "label" field in SDF.
 
-7.1.1.6.  max and minMultiplicity
+B.1.1.6.  max and minMultiplicity
 
    These define how many instances of the relationship can exist of the
    target type.  The sdfRelation is purely a class-level definition, but
@@ -436,66 +473,29 @@ Table of Contents
    Thus, these fields map to maxItems and minItems in the corresponding
    sdfType "link" definition.
 
-7.1.1.7.  DTDL properties
+B.1.1.7.  DTDL properties
 
    Relationship definition in DTDL may contain additional properties
    (key-value pairs) that describe additional properties for this
    relationship.  This can be converted into sdfProperty in the same
    object as where the sdfRelation definion is.
 
-7.1.1.8.  DTDL target
+B.1.1.8.  DTDL target
 
    In DTDL this is the Interface of the target, in SDF this maps to the
    target object of this relation.
 
-7.1.1.9.  DTDL writable
+B.1.1.9.  DTDL writable
 
    The relationship itself is not defined to be writable, but this field
    maps to the SDF instance and to the corresponding sdfType "link"
    definition.
 
-7.1.1.10.  SDF Relation type
+B.1.1.10.  SDF Relation type
 
    In SDF, the relType is giving the type of the relationship, e.g.
    isControlledBy.  However, in DTDL, this is not directly described in
    the DTDL file.
-
-8.  References
-
-8.1.  Normative References
-
-   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119,
-              DOI 10.17487/RFC2119, March 1997,
-              <https://www.rfc-editor.org/rfc/rfc2119>.
-
-   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
-              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
-              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
-
-   [SDF]      Koster, M., Bormann, C., and A. Keränen, "Semantic
-              Definition Format (SDF) for Data and Interactions of
-              Things", Work in Progress, Internet-Draft, draft-ietf-
-              asdf-sdf-24, 27 July 2025,
-              <https://datatracker.ietf.org/doc/html/draft-ietf-asdf-
-              sdf-24>.
-
-8.2.  Informative References
-
-   [DTDL]     "Digital Twins Definition Language (DTDL) v2", 10 February
-              2022, <https://github.com/Azure/opendigitaltwins-
-              dtdl/blob/master/DTDL/v2/dtdlv2.md>.
-
-   [I-D.bormann-asdf-sdftype-link]
-              Bormann, C., "An sdfType for Links", Work in Progress,
-              Internet-Draft, draft-bormann-asdf-sdftype-link-04, 6
-              December 2024, <https://datatracker.ietf.org/doc/html/
-              draft-bormann-asdf-sdftype-link-04>.
-
-   [saref4bldg]
-              Poveda-Villalón, M. and R. Garcia-Castro, "SAREF extension
-              for building", 5 June 2020,
-              <https://saref.etsi.org/saref4bldg>.
 
 Acknowledgments
 
