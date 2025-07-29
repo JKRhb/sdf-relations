@@ -264,19 +264,34 @@ This document has no IANA actions.
 
 # Appendix A. Formal Syntax of sdf-relation
 
-<sourcecode>
-sdfRelation = ( sdfRelation: {
+~~~ cddl
+$$SDF-EXTENSION-THING //= sdf-relation
+$$SDF-EXTENSION-OBJECT //= sdf-relation
+$$SDF-EXTENSION-PROPERTY //= sdf-relation
+$$SDF-EXTENSION-ACTION //= sdf-relation
+$$SDF-EXTENSION-EVENT //= sdf-relation
+$$SDF-EXTENSION-DATA //= sdf-relation
+
+sdf-relation = ( 
+  sdfRelation: named<relation-entries>
+)
+
+relation-entries = {
   ? relType: global
   ? target: global
   ? description: text
   ? label: text
   ? property: { * text => text }
   ? $comment: text
-})
+}
+
+; Shortcut for a map that gives names to instances of X
+; (has keys of type text and values of type X)
+named<X> = { * text => X }
 
 ; from SDF CDDL
 global = text .regexp ".*[:#].*" ; rough CURIE or JSON Pointer syntax
-</sourcecode>
+~~~
 
 --- back
 
