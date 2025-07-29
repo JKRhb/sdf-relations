@@ -191,7 +191,9 @@ TODO Security
 
 This document has no IANA actions.
 
-# Appendix A. Formal Syntax of sdf-relation
+--- back
+
+# Formal Syntax of sdf-relation
 
 <sourcecode>
 sdfRelation = ( sdfRelation: {
@@ -207,7 +209,7 @@ sdfRelation = ( sdfRelation: {
 global = text .regexp ".*[:#].*" ; rough CURIE or JSON Pointer syntax
 </sourcecode>
 
-# Appendix B. Ecosystem Mappings
+# Ecosystem Mappings
 
 This appendix provides an example mapping for SDF relations to related
 approaches from selected IoT ecosystems.
@@ -283,8 +285,6 @@ The relationship itself is not defined to be writable, but this field maps to th
 #### SDF Relation type
 
 In SDF, the relType is giving the type of the relationship, e.g. isControlledBy. However, in DTDL, this is not directly described in the DTDL file.
-
---- back
 
 # Acknowledgments
 {:numbered="false"}
